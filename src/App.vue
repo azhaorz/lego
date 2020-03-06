@@ -1,29 +1,31 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-  </div>
+  <div id="app"></div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "./components/HelloWorld.vue";
+import Lego from "./utils/lego/index";
 
-@Component({
-  components: {
-    HelloWorld
+@Component({})
+export default class App extends Vue {
+  mounted() {
+    const lego = new Lego({
+      el: document.getElementById("app")
+    });
+    // lego.render();
+    lego.debug();
+    lego.createGround();
+    lego.createRectangle({ width: 100, height: 100, x: 0, y: 0, z: 0 });
   }
-})
-export default class App extends Vue {}
+}
 </script>
 
 <style>
+body {
+  margin: 0;
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  width: 100vw;
+  height: 100vh;
 }
 </style>

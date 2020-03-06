@@ -5,10 +5,20 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "commit": "npx git-cz",
+    "log": "npx conventional-changelog -p angular -i ./CHANGELOG.md -s"
   },
   "dependencies": {
+    "@tweenjs/tween.js": "^18",
+    "@types/dat.gui": "^0.7.5",
+    "@types/lodash": "^4.14.149",
+    "@types/stats.js": "^0.17.0",
     "core-js": "^3.6.4",
+    "dat.gui": "^0.7.6",
+    "lodash": "^4.17.15",
+    "stats.js": "^0.17.0",
+    "three": "^0.113.2",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.2",
     "vue-property-decorator": "^8.3.0"
@@ -22,6 +32,10 @@
     "@vue/cli-service": "~4.2.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^5.0.1",
+    "commitizen": "^4.0.3",
+    "conventional-changelog": "^3.1.18",
+    "conventional-changelog-cli": "^2.0.31",
+    "cz-conventional-changelog": "^3.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-vue": "^6.1.2",
@@ -38,5 +52,10 @@
       "vue-cli-service lint",
       "git add"
     ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
