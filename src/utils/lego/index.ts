@@ -14,13 +14,15 @@ import {
   MeshStandardMaterial,
   Mesh,
   Shape,
-  Color,
-  BoxGeometry
+  Color
 } from "three";
 
 import { CameraOptions } from "./config/camera";
 import { SceneOptions } from "./config/scene";
 import Stats from "stats.js";
+import Helper from "./utils/Helper";
+import Model from "./core/Model";
+import Interaction from "./core/Interaction";
 
 export default class Lego {
   el: HTMLElement;
@@ -56,6 +58,7 @@ export default class Lego {
     this.el = el;
     // 场景
     this.scene = new SceneFactory().getScene(SceneType.Scene, sceneOptions);
+    this.scene.add(Model.group);
     // 相机
     this.camera = new CameraFactory(el).getCamera(
       CameraType.Orthographic,
@@ -116,14 +119,6 @@ export default class Lego {
     this.scene.add(this.ground);
   }
 
-  createRectangle({ width, height, x, y, z }: Rectangle) {
-    const rectangle = new BoxGeometry(width, 10, height);
-    const material = new MeshStandardMaterial({ color: new Color("#00ff00") });
-    const mesh = new Mesh(rectangle, material);
-    mesh.position.set(x, y, z);
-    this.scene.add(mesh);
-  }
-
   render() {
     const { control, scene, renderer, camera } = this;
     control.update();
@@ -137,26 +132,24 @@ export default class Lego {
 
   debug() {
     const { control, scene, renderer, camera } = this;
-    const gui = new Dat();
-
-    const l = gui.light({ x: 40, y: 300, z: 300 });
-    const g = gui.ground({ rx: Math.PI / 2, ry: 0, rz: 0 });
+    const helper = new Helper(this.scene);
+    helper.crtGrid(50);
     const stats = new Stats();
     stats.showPanel(0);
     this.el.appendChild(stats.dom);
+    new Interaction(camera, scene).addClickHandle(i => console.log(i));
 
     const animate = () => {
       this.camera.debug();
       this.ambientLight.debug();
-      this.directionalLight.position.set(l.x, l.y, l.z);
-      this.ground && this.ground.rotation.set(g.rx, g.ry, g.rz);
-      control.update();
+      this.directionalLight.debug();
       renderer.render(scene, camera);
-      requestAnimationFrame(animate);
+
+      control.update();
       stats.update();
+      requestAnimationFrame(animate);
     };
     animate();
-    control.update();
   }
 }
 

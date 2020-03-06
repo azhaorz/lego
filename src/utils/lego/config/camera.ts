@@ -1,10 +1,10 @@
 export const OrthographicDefaultOptions: OrthographicOptions = {
-  near: 0,
-  far: 1000,
-  multiple: 1,
-  x: 300,
-  y: 300,
-  z: 300
+  near: 1,
+  far: 10000,
+  multiple: 2,
+  x: 900,
+  y: 900,
+  z: 900
 };
 
 /**

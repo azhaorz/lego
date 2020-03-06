@@ -45,14 +45,32 @@ class Ambient extends AmbientLight implements Light {
 }
 
 class Directional extends DirectionalLight implements Light {
+  /**
+   * 配置项
+   */
+  options: DirectionalOptions;
+  /**
+   * debug对象
+   */
+  db: any;
   constructor(options: DirectionalOptions) {
     const { color, intensity, x, y, z } = options;
     super(new Color(color), intensity);
     this.position.set(x, y, z);
+    this.options = options;
   }
 
   debug() {
-    console.log(1);
+    if (!this.db) {
+      console.log(this);
+      this.db = new Debug().add("平行光", this.options);
+    }
+    const {
+      db: { color, intensity, x, y, z }
+    } = this;
+    this.color.set(color);
+    this.intensity = intensity;
+    this.position.set(x, y, z);
   }
 }
 

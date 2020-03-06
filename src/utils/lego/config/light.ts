@@ -1,13 +1,13 @@
 export const AmbientDefaultOptions: AmbientOptions = {
   color: "#ffffff",
-  intensity: 1
+  intensity: 0.74
 };
 export const DirectionalDefaultOptions: DirectionalOptions = {
-  color: "#ffffff",
-  intensity: 1,
-  x: 40,
-  y: 300,
-  z: 300
+  color: "#3c3c3c",
+  intensity: 1.02,
+  x: 243,
+  y: 533,
+  z: 398
 };
 
 /**
