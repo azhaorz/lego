@@ -26,7 +26,7 @@ export default class Interaction {
     document.addEventListener(
       "click",
       e => {
-        this.crtMouseHandle(mouse, e);
+        this.mouseTranslate(mouse, e);
         raycaster.setFromCamera(mouse, this.camera);
         intersects = raycaster.intersectObjects(
           this.scene.children[0].children
@@ -43,7 +43,7 @@ export default class Interaction {
    * @param mouse 鼠标向量
    * @param e 点击事件
    */
-  crtMouseHandle(mouse: Vector2, e: MouseEvent) {
+  mouseTranslate(mouse: Vector2, e: MouseEvent) {
     e.preventDefault();
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;

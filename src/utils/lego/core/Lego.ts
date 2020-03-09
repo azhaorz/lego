@@ -1,14 +1,15 @@
-import { CameraFactory, CameraType, Camera } from "./core/Camera";
-import { SceneFactory, SceneType } from "./core/Scene";
-import { LightFactory, LightType, Light } from "./core/Light";
-import { RendererFactory, RendererType } from "./core/Renderer";
-import { ControlFactory, ControlType } from "./core/Control";
+import { Camera, CameraType } from "./Camera";
+import { Scene, SceneType } from "./Scene";
+import { Light, LightType } from "./Light";
+import { RendererFactory, RendererType } from "./Renderer";
+import { ControlFactory, ControlType } from "./Control";
 import { MapControls } from "three/examples/jsm/controls/OrbitControls";
 
-import { WEBGL } from "./utils/WebGl.js";
-import Dat from "./utils/Dat";
+import { WEBGL } from "../utils/WebGl.js";
 import {
-  Scene,
+  Scene as tScene,
+  Camera as tCamera,
+  Light as tLight,
   Renderer,
   ExtrudeGeometry,
   MeshStandardMaterial,
@@ -17,20 +18,20 @@ import {
   Color
 } from "three";
 
-import { CameraOptions } from "./config/camera";
-import { SceneOptions } from "./config/scene";
+import { CameraOptions } from "../config/camera";
+import { SceneOptions } from "../config/scene";
 import Stats from "stats.js";
-import Helper from "./utils/Helper";
-import Model from "./core/Model";
-import Interaction from "./core/Interaction";
+import Helper from "../utils/Helper";
+import Model from "./Model";
+import Interaction from "./Interaction";
 
 export default class Lego {
   el: HTMLElement;
   // 场景
-  scene: Scene;
+  scene: tScene;
 
   // 相机
-  camera: Camera;
+  camera: tCamera;
 
   // 渲染器
   renderer: Renderer;
@@ -42,10 +43,13 @@ export default class Lego {
   ground: Mesh | null = null;
 
   // 环境光
-  ambientLight: Light;
+  ambientLight: tLight;
 
   // 平行光
-  directionalLight: Light;
+  directionalLight: tLight;
+
+  // 调试函数组
+  debugList: Function[] = [];
 
   constructor({ el, camera: cameraOptions, scene: sceneOptions }: LegoOptions) {
     if (!el || el.toString() !== "[object HTMLDivElement]") {
@@ -57,18 +61,18 @@ export default class Lego {
     // 挂载元素
     this.el = el;
     // 场景
-    this.scene = new SceneFactory().getScene(SceneType.Scene, sceneOptions);
+    this.scene = new Scene().crtScene(SceneType.Scene, sceneOptions);
     this.scene.add(Model.group);
     // 相机
-    this.camera = new CameraFactory(el).getCamera(
+    this.camera = new Camera(el, this).crtCamera(
       CameraType.Orthographic,
       cameraOptions
     );
     // 光照
-    const lf = new LightFactory();
-    this.scene.add((this.ambientLight = lf.getLight(LightType.Ambient)));
+    const lf = new Light(this);
+    this.scene.add((this.ambientLight = lf.crtLight(LightType.Ambient)));
     this.scene.add(
-      (this.directionalLight = lf.getLight(LightType.Directional))
+      (this.directionalLight = lf.crtLight(LightType.Directional))
     );
     // 渲染器
     this.renderer = new RendererFactory(el).getRenderer(
@@ -121,12 +125,14 @@ export default class Lego {
 
   render() {
     const { control, scene, renderer, camera } = this;
-    control.update();
-    function animate() {
-      requestAnimationFrame(animate);
+    console.log(this.debugList);
+
+    const animate = () => {
+      this.debugList.forEach(f => f());
       control.update();
       renderer.render(scene, camera);
-    }
+      requestAnimationFrame(animate);
+    };
     animate();
   }
 
@@ -140,11 +146,7 @@ export default class Lego {
     new Interaction(camera, scene).addClickHandle(i => console.log(i));
 
     const animate = () => {
-      this.camera.debug();
-      this.ambientLight.debug();
-      this.directionalLight.debug();
       renderer.render(scene, camera);
-
       control.update();
       stats.update();
       requestAnimationFrame(animate);

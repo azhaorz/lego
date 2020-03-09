@@ -4,14 +4,17 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Lego from "./utils/lego/index";
+import Lego from "./utils/lego/core/Lego";
 import Model from "./utils/lego/core/Model";
 
 @Component({})
 export default class App extends Vue {
   mounted() {
     const lego = new Lego({
-      el: document.getElementById("app")
+      el: document.getElementById("app"),
+      camera: {
+        debug: false
+      }
     });
     Model.crtRectangleGround({
       width: 2000,
@@ -30,7 +33,7 @@ export default class App extends Vue {
         color: "#00ff00"
       }
     ]);
-    lego.debug();
+    lego.render();
     // lego.createRectangle({ width: 100, height: 100, x: 0, y: 0, z: 0 });
   }
 }

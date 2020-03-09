@@ -1,13 +1,15 @@
 export const AmbientDefaultOptions: AmbientOptions = {
   color: "#ffffff",
-  intensity: 0.74
+  intensity: 0.74,
+  debug: true
 };
 export const DirectionalDefaultOptions: DirectionalOptions = {
   color: "#3c3c3c",
   intensity: 1.02,
   x: 243,
   y: 533,
-  z: 398
+  z: 398,
+  debug: true
 };
 
 /**
@@ -22,6 +24,10 @@ export interface LightOptions {
    * 光照强度
    */
   intensity: number;
+  /**
+   * 是否开启调试
+   */
+  debug?: boolean;
 }
 
 /**

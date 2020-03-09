@@ -1,7 +1,7 @@
 import dat from "dat.gui";
 import clone from "lodash/clone";
 
-export default class Debug {
+export class Debug {
   static gui = new dat.GUI();
   /**
    * 倍数
@@ -12,7 +12,7 @@ export default class Debug {
     this.multiple = multiple;
   }
 
-  add(name: string, options: any) {
+  add<T extends object>(name: string, options: T) {
     options = clone(options);
     const folder = Debug.gui.addFolder(name);
     for (const key in options) {
@@ -23,10 +23,14 @@ export default class Debug {
           options,
           key,
           -options[key] * this.multiple,
-          options[key] * this.multiple
+          +options[key] * this.multiple
         );
       }
     }
     return options;
   }
+}
+
+export interface IDebug {
+  debug: Function;
 }
