@@ -13,7 +13,13 @@ export default class App extends Vue {
     const lego = new Lego({
       el: document.getElementById("app"),
       camera: {
-        debug: false
+        debug: true
+      },
+      ambient: {
+        debug: true
+      },
+      directional: {
+        debug: true
       }
     });
     Model.crtRectangleGround({

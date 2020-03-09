@@ -1,4 +1,4 @@
-import { Light as tLight, AmbientLight, DirectionalLight, Color } from "three";
+import { Light as tLight, AmbientLight, DirectionalLight } from "three";
 import {
   AmbientDefaultOptions,
   DirectionalDefaultOptions,
@@ -31,23 +31,25 @@ class Ambient extends AmbientLight implements DebugLight {
   /**
    * debug对象
    */
-  db: any;
+  static db: AmbientOptions | null = null;
 
   constructor(options: AmbientOptions) {
-    super(new Color(options.color));
+    super();
     this.name = LightType.Ambient;
+    this.set(options);
     this.options = options;
   }
 
+  set(options: AmbientOptions) {
+    this.color.set(options.color as string);
+    this.intensity = options.intensity as number;
+  }
+
   debug = () => {
-    if (!this.db) {
-      this.db = new Debug().add("环境光", this.options);
+    if (!Ambient.db) {
+      Ambient.db = new Debug().add("环境光", this.options);
     }
-    const {
-      db: { color, intensity }
-    } = this;
-    this.color.set(color);
-    this.intensity = intensity;
+    this.set(Ambient.db);
   };
 }
 
@@ -59,25 +61,29 @@ class Directional extends DirectionalLight implements DebugLight {
   /**
    * debug对象
    */
-  db: any;
+  static db: DirectionalOptions | null = null;
   constructor(options: DirectionalOptions) {
-    super(new Color(options.color), options.intensity);
+    super();
     this.name = LightType.Directional;
-    this.position.set(options.x, options.y, options.z);
+    this.set(options);
     this.options = options;
   }
 
+  set(options: DirectionalOptions) {
+    this.color.set(options.color as string);
+    this.intensity = options.intensity as number;
+    this.position.set(
+      options.x as number,
+      options.y as number,
+      options.z as number
+    );
+  }
+
   debug = () => {
-    if (!this.db) {
-      console.log(this);
-      this.db = new Debug().add("平行光", this.options);
+    if (!Directional.db) {
+      Directional.db = new Debug().add("平行光", this.options);
     }
-    const {
-      db: { color, intensity, x, y, z }
-    } = this;
-    this.color.set(color);
-    this.intensity = intensity;
-    this.position.set(x, y, z);
+    this.set(Directional.db);
   };
 }
 
@@ -105,6 +111,8 @@ export class Light {
     if (type === LightType.Ambient) {
       // 环境光
       mergeOptions = merge(AmbientDefaultOptions, options);
+      console.log(mergeOptions);
+
       light = new Ambient(mergeOptions);
     } else if (type === LightType.Directional) {
       // 平行光

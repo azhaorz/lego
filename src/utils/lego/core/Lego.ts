@@ -24,6 +24,7 @@ import Stats from "stats.js";
 import Helper from "../utils/Helper";
 import Model from "./Model";
 import Interaction from "./Interaction";
+import { AmbientOptions, DirectionalOptions } from "../config/light";
 
 export default class Lego {
   el: HTMLElement;
@@ -51,7 +52,13 @@ export default class Lego {
   // 调试函数组
   debugList: Function[] = [];
 
-  constructor({ el, camera: cameraOptions, scene: sceneOptions }: LegoOptions) {
+  constructor({
+    el,
+    camera: cameraOptions,
+    scene: sceneOptions,
+    ambient: ambientOptions,
+    directional: directionalOptions
+  }: LegoOptions) {
     if (!el || el.toString() !== "[object HTMLDivElement]") {
       throw new Error("请传入需要被挂载的document节点元素");
     }
@@ -70,9 +77,14 @@ export default class Lego {
     );
     // 光照
     const lf = new Light(this);
-    this.scene.add((this.ambientLight = lf.crtLight(LightType.Ambient)));
     this.scene.add(
-      (this.directionalLight = lf.crtLight(LightType.Directional))
+      (this.ambientLight = lf.crtLight(LightType.Ambient, ambientOptions))
+    );
+    this.scene.add(
+      (this.directionalLight = lf.crtLight(
+        LightType.Directional,
+        directionalOptions
+      ))
     );
     // 渲染器
     this.renderer = new RendererFactory(el).getRenderer(
@@ -169,27 +181,12 @@ interface LegoOptions {
    * 场景配置
    */
   scene?: SceneOptions;
-}
-
-interface Rectangle {
   /**
-   * 矩形宽度
+   * 环境光配置
    */
-  width: number;
+  ambient?: AmbientOptions;
   /**
-   * 矩形高度
+   * 平行光配置
    */
-  height: number;
-  /**
-   * 矩形x轴位置
-   */
-  x: number;
-  /**
-   * 矩形y轴位置
-   */
-  y: number;
-  /**
-   * 矩形z轴位置
-   */
-  z: number;
+  directional?: DirectionalOptions;
 }

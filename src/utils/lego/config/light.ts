@@ -1,7 +1,7 @@
 export const AmbientDefaultOptions: AmbientOptions = {
   color: "#ffffff",
   intensity: 0.74,
-  debug: true
+  debug: false
 };
 export const DirectionalDefaultOptions: DirectionalOptions = {
   color: "#3c3c3c",
@@ -9,7 +9,7 @@ export const DirectionalDefaultOptions: DirectionalOptions = {
   x: 243,
   y: 533,
   z: 398,
-  debug: true
+  debug: false
 };
 
 /**
@@ -19,11 +19,11 @@ export interface LightOptions {
   /**
    * 光照颜色
    */
-  color: string;
+  color?: string;
   /**
    * 光照强度
    */
-  intensity: number;
+  intensity?: number;
   /**
    * 是否开启调试
    */
@@ -39,13 +39,13 @@ export interface DirectionalOptions extends LightOptions {
   /**
    * 距离x轴的位置
    */
-  x: number;
+  x?: number;
   /**
    * 距离y轴的位置
    */
-  y: number;
+  y?: number;
   /**
    * 距离z轴的位置
    */
-  z: number;
+  z?: number;
 }
