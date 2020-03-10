@@ -29,6 +29,8 @@ import {
   DirectionalOptions,
   LightOptions
 } from "../config/light";
+import merge from "lodash/merge";
+import { RenderOptions, renderOptions, HelperOptions } from "../config/lego";
 
 export default class Lego {
   el: HTMLElement;
@@ -115,6 +117,15 @@ export default class Lego {
     return lightFactory.crtLight(LightType.Directional, options);
   }
 
+  initHelper(helperOptions: HelperOptions, scene: tScene, el: HTMLElement) {
+    const helper = new Helper(scene, el);
+    const { grid, stats } = helperOptions;
+    grid && helper.addGrid(grid);
+    if (typeof stats === "number") {
+      this.debugList.push(helper.addStats(stats));
+    }
+  }
+
   /**
    * 兼容性检测
    * @param el 挂载节点
@@ -154,31 +165,35 @@ export default class Lego {
     this.scene.add(this.ground);
   }
 
-  render() {
+  /**
+   * 渲染
+   */
+  render(options?: RenderOptions) {
     const { scene } = this;
     scene.add(Model.group);
     scene.add(this.ambientLight);
     scene.add(this.directionalLight);
-
+    const { helper } = merge(renderOptions, options);
+    this.initHelper(helper, scene, this.el);
+    new Interaction(this.camera, scene).addClickHandle(i => console.log(i));
     this.animate();
   }
 
+  /**
+   * 动画
+   */
   animate = () => {
-    const { control, scene, renderer, camera } = this;
     this.debugList.forEach(f => f());
-    control.update();
-    renderer.render(scene, camera);
+    this.control.update();
+    this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.animate);
   };
 
   debug() {
     const { control, scene, renderer, camera } = this;
-    const helper = new Helper(this.scene);
-    helper.crtGrid(50);
     const stats = new Stats();
     stats.showPanel(0);
     this.el.appendChild(stats.dom);
-    new Interaction(camera, scene).addClickHandle(i => console.log(i));
 
     const animate = () => {
       renderer.render(scene, camera);

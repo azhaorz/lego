@@ -31,7 +31,7 @@ export default class Interaction {
         intersects = raycaster.intersectObjects(
           this.scene.children[0].children
         );
-        this.modelHighlight(intersects[0]);
+        // this.modelHighlight(intersects[0]);
         cb && cb(intersects);
       },
       false

@@ -39,7 +39,7 @@ export default class App extends Vue {
         color: "#00ff00"
       }
     ]);
-    lego.render();
+    lego.render({ helper: { grid: 0, stats: 0 } });
     // lego.createRectangle({ width: 100, height: 100, x: 0, y: 0, z: 0 });
   }
 }
