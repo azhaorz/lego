@@ -24,7 +24,11 @@ import Stats from "stats.js";
 import Helper from "../utils/Helper";
 import Model from "./Model";
 import Interaction from "./Interaction";
-import { AmbientOptions, DirectionalOptions } from "../config/light";
+import {
+  AmbientOptions,
+  DirectionalOptions,
+  LightOptions
+} from "../config/light";
 
 export default class Lego {
   el: HTMLElement;
@@ -68,32 +72,47 @@ export default class Lego {
     // 挂载元素
     this.el = el;
     // 场景
-    this.scene = new Scene().crtScene(SceneType.Scene, sceneOptions);
-    this.scene.add(Model.group);
+    this.scene = this.initScene(sceneOptions);
     // 相机
-    this.camera = new Camera(el, this).crtCamera(
-      CameraType.Orthographic,
-      cameraOptions
-    );
-    // 光照
+    this.camera = this.initCamera(cameraOptions, el);
+    // 光照工厂
     const lf = new Light(this);
-    this.scene.add(
-      (this.ambientLight = lf.crtLight(LightType.Ambient, ambientOptions))
-    );
-    this.scene.add(
-      (this.directionalLight = lf.crtLight(
-        LightType.Directional,
-        directionalOptions
-      ))
-    );
+    // 环境光
+    this.ambientLight = this.initAmbientLight(lf, ambientOptions);
+    // 平行光
+    this.directionalLight = this.initDirectionalLight(lf, directionalOptions);
     // 渲染器
-    this.renderer = new RendererFactory(el).getRenderer(
-      RendererType.WebGLRenderer
-    );
+    this.renderer = this.initRenderer(el);
     // 控制器
-    this.control = new ControlFactory(el, this.camera).getControl(
-      ControlType.MapControls
-    );
+    this.control = this.initControl(this.camera, el);
+    console.log(this.control);
+  }
+
+  initScene(options: SceneOptions | undefined) {
+    return new Scene().crtScene(SceneType.Scene, options);
+  }
+
+  initCamera(options: CameraOptions | undefined, el: HTMLElement) {
+    return new Camera(el, this).crtCamera(CameraType.Orthographic, options);
+  }
+
+  initRenderer(el: HTMLElement) {
+    return new RendererFactory(el).getRenderer(RendererType.WebGLRenderer);
+  }
+
+  initControl(camera: tCamera, el: HTMLElement) {
+    return new ControlFactory(el, camera).getControl(ControlType.MapControls);
+  }
+
+  initAmbientLight(lightFactory: Light, options: LightOptions | undefined) {
+    return lightFactory.crtLight(LightType.Ambient, options);
+  }
+
+  initDirectionalLight(
+    lightFactory: Light,
+    options: DirectionalOptions | undefined
+  ) {
+    return lightFactory.crtLight(LightType.Directional, options);
   }
 
   /**
@@ -136,17 +155,21 @@ export default class Lego {
   }
 
   render() {
-    const { control, scene, renderer, camera } = this;
-    console.log(this.debugList);
+    const { scene } = this;
+    scene.add(Model.group);
+    scene.add(this.ambientLight);
+    scene.add(this.directionalLight);
 
-    const animate = () => {
-      this.debugList.forEach(f => f());
-      control.update();
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
-    };
-    animate();
+    this.animate();
   }
+
+  animate = () => {
+    const { control, scene, renderer, camera } = this;
+    this.debugList.forEach(f => f());
+    control.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(this.animate);
+  };
 
   debug() {
     const { control, scene, renderer, camera } = this;

@@ -18,6 +18,8 @@ export class Debug {
     for (const key in options) {
       if (key === "color") {
         folder.addColor(options, key);
+      } else if (key === "debug") {
+        continue;
       } else {
         folder.add(
           options,
